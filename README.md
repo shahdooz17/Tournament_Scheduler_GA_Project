@@ -25,7 +25,7 @@ This project aims to build an intelligent scheduling tool for sports tournaments
 | Genetic Algorithms / EAs      | `DEAP`, `PyGAD`  |
 | Constraint Modeling           | `NumPy`, `PuLP`  |
 | Visualization                 | `Matplotlib`, `Plotly`, `Pandas` |
-| GUI (optional)                | `Tkinter`, `Streamlit` |
+| GUI                           | `Tkinter`, `Streamlit` |
 | Data Handling & Utils         | `Pandas`, `JSON` |
 | Logging & Experimentation     | `logging`, `SciPy`, `PrettyTable` |
 | Optional SI Methods           | `pyswarms`       |
