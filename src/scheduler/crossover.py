@@ -6,51 +6,60 @@ venues = ld.load_venues()
 
 def order_crossover(parent1, parent2):
     size = len(parent1)
-    start , end =sorted(random.sample(range(len(parent1)), 2))
+    start, end = sorted(random.sample(range(len(parent1)), 2))
 
     child = [None] * size
-    child[start:end +1] = parent1[start:end+1]
+    child[start:end + 1] = parent1[start:end + 1]
 
-    p2_idx = (end+1 ) % len(parent2)
-    c_idx = (end+1 ) % len(child)
+    p2_idx = (end + 1) % len(parent2)
+    c_idx = (end + 1) % len(child)
 
-    while None in child :
+    none_count = child.count(None)
+    while none_count > 0:
         match = parent2[p2_idx]
-        if match not in child :
-            child[c_idx] = match 
-            c_idx = (c_idx+1) % len(child)
+        if match not in child:
+            child[c_idx] = match
+            none_count -= 1
+        p2_idx = (p2_idx + 1) % len(parent2)
+        c_idx = (c_idx + 1) % len(child)
 
-        p2_idx = (p2_idx+1 ) % len(child)
-
-
-    assert len(set(tuple(match.items()) for match in child )) == len(child) , "Duplicated or missing matches in child"   
-
-    ##existing_pairs = {(m['team1'], m['team2']) for m in child[start:end]}
-
-    # Fill remaining genes based on match pairing only
-    ##idx = end
-    ##for match in parent2:
-    ##    pair = (match['team1'], match['team2'])
-    ##    if pair not in existing_pairs:
-    ##        if idx >= size:
-    ##            idx = 0
-    ##        child[idx] = {
-    ##            "team1": match["team1"],
-    ##            "team2": match["team2"],
-    ##            "day": match["day"],     # temporary
-    ##            "time": match["time"],   # temporary
-    ##            "venue": match["venue"]  # temporary
-    ##        }
-    ##        existing_pairs.add(pair)
-    ##       idx += 1
-
-    # Re-randomize time/venue for feasibility (you can do better with repair later)
-    ##all_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sunday"]
-    ##all_times = ["01:00-03:00","03:00-05:00", "05:00-07:00", "07:00-09:00", "09:00-11:00"]
-    ##for match in child:
-    ##    venue = random.choice(venues)
-    ##    match["day"] = random.choice(all_days)
-    ##    match["time"] = random.choice(all_times)
-    ##    match["venue"] = venue["name"]
-
+    assert len(set(tuple(match.items()) for match in child)) == len(child), "Duplicated or missing matches in child"
+    
     return child
+
+
+def cyclic_crossover(parent1, parent2):
+    size = len(parent1)
+    child1 = [None] * size
+    child2 = [None] * size
+
+    visited = [False] * size
+    cycle = 0
+
+    while any(not visited[i] for i in range(size)):
+        current_idx = 0
+        
+        while visited[current_idx]:
+            current_idx += 1
+
+        cycle_start = current_idx
+        
+        while not visited[cycle_start]:
+            if cycle % 2 == 0:
+                child1[cycle_start] = parent1[cycle_start]
+                child2[cycle_start] = parent2[cycle_start]
+            else:
+                child1[cycle_start] = parent2[cycle_start]
+                child2[cycle_start] = parent1[cycle_start]
+
+            visited[cycle_start] = True
+            
+
+            if parent1[cycle_start] in parent2:
+                cycle_start = parent2.index(parent1[cycle_start])
+            else:
+                break  
+            
+        cycle += 1
+
+    return child1, child2

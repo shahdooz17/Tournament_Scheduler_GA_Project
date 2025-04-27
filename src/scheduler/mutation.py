@@ -5,17 +5,33 @@ venues = ld.load_venues()
 
 def swap_mutation(schedule):
     mutated = schedule.copy()
-    idx = random.randint(0, len(mutated) - 1)
+    
+    idx1 = random.randint(0, len(mutated) - 1)
+    idx2 = random.randint(0, len(mutated) - 1)
+    
+    while idx1 == idx2:
+        idx2 = random.randint(0, len(mutated) - 1)
 
-    all_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sunday"]
-    all_times = ["01:00-03:00","03:00-05:00", "05:00-07:00", "07:00-09:00", "09:00-11:00"]
+    mutated[idx1]['day'], mutated[idx2]['day'] = mutated[idx2]['day'], mutated[idx1]['day']
+    mutated[idx1]['time'], mutated[idx2]['time'] = mutated[idx2]['time'], mutated[idx1]['time']
+    mutated[idx1]['venue'], mutated[idx2]['venue'] = mutated[idx2]['venue'], mutated[idx1]['venue']
 
-    new_day = random.choice(all_days)
-    new_time = random.choice(all_times)
-    new_venue = random.choice(venues)["name"]
+    return mutated
 
-    mutated[idx]["day"] = new_day
-    mutated[idx]["time"] = new_time
-    mutated[idx]["venue"] = new_venue
+def scramble_mutation(schedule):
+    mutated = schedule.copy()
+    size = len(mutated)
+
+    if size < 2:
+        return mutated
+
+    start = random.randint(0, size - 2)
+    end = random.randint(start + 1, size - 1)
+
+    subset = mutated[start:end + 1]
+
+    random.shuffle(subset)
+
+    mutated[start:end + 1] = subset
 
     return mutated
