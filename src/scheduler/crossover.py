@@ -30,36 +30,30 @@ def order_crossover(parent1, parent2):
 
 def cyclic_crossover(parent1, parent2):
     size = len(parent1)
-    child1 = [None] * size
-    child2 = [None] * size
+    child = [None] * size  
 
-    visited = [False] * size
-    cycle = 0
+    visited = [False] * size  
+    cycle = 0  
 
-    while any(not visited[i] for i in range(size)):
-        current_idx = 0
-        
-        while visited[current_idx]:
-            current_idx += 1
+    while any(not visited[i] for i in range(size)): 
+        current_idx = visited.index(False)
 
-        cycle_start = current_idx
-        
-        while not visited[cycle_start]:
-            if cycle % 2 == 0:
-                child1[cycle_start] = parent1[cycle_start]
-                child2[cycle_start] = parent2[cycle_start]
-            else:
-                child1[cycle_start] = parent2[cycle_start]
-                child2[cycle_start] = parent1[cycle_start]
+        indices_in_cycle = []  
 
-            visited[cycle_start] = True
-            
+        while not visited[current_idx]: 
+            indices_in_cycle.append(current_idx)
+            visited[current_idx] = True
 
-            if parent1[cycle_start] in parent2:
-                cycle_start = parent2.index(parent1[cycle_start])
-            else:
-                break  
-            
+            current_idx = parent2.index(parent1[current_idx])
+
+        if cycle % 2 == 0:
+            for idx in indices_in_cycle:
+                child[idx] = parent1[idx]
+        else:
+            for idx in indices_in_cycle:
+                child[idx] = parent2[idx]
+
         cycle += 1
 
-    return child1, child2
+    return child
+

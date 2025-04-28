@@ -15,21 +15,16 @@ def initialization(num_individuals):
     
     for _ in range(num_individuals):
         schedule = []
-        used_slots = set()
-        available_slots = timeslots.copy()
 
         for team1, team2 in team_pairs:
             max_attempts = 100
             attempts = 0
             valid = False
             
-            while not valid and attempts < max_attempts and available_slots:
+            while not valid and attempts < max_attempts:
                 venue = random.choice(venues)
-                day, time = random.choice(available_slots)
+                day, time = random.choice(timeslots)
                 attempts += 1
-
-                if (venue["id"], day, time) in used_slots:
-                    continue
 
                 match = {
                     "team1": team1["name"],
@@ -40,8 +35,7 @@ def initialization(num_individuals):
                 }
 
                 schedule.append(match)
-                used_slots.add((venue["id"], day, time))
-                available_slots.remove((day, time))
+
                 valid = True
 
         population.append(schedule)

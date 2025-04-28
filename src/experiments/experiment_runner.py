@@ -30,11 +30,9 @@ def cyclic_crossover(parent1, parent2):
 
 
 
-# Example parents
 parent1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 parent2 = [9, 3, 7, 8, 2, 6, 5, 1, 4]
 
-# Perform cycle crossover
 child1, child2 = cyclic_crossover(parent1, parent2)
 
 print("Parent 1:", parent1)
