@@ -12,8 +12,10 @@ def load_data():
 
 def load_teams():
     df = load_data()
-    return [{"id": i + 1, "name": row["HomeTeams"]} for i, row in df.iterrows()]
+    df_unique = df.drop_duplicates(subset=["HomeTeams"])
+    return [{"id": i + 1, "name": row["HomeTeams"]} for i, row in df_unique.iterrows()]
 
 def load_venues():
     df = load_data()
-    return [{"id": f"V{i + 1}", "name": row["Stadium"]} for i, row in df.iterrows()]
+    df_unique = df.drop_duplicates(subset=["Stadium"])
+    return [{"id": i + 1, "name": row["Stadium"]} for i, row in df_unique.iterrows()]

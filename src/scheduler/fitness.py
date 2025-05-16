@@ -4,34 +4,40 @@ from data import load_data as ld
 teams = ld.load_teams()
 venues = ld.load_venues()
 
+team_ids = [team["id"] for team in teams]
+venue_ids = [venue["id"] for venue in venues]
+
 def fitness(schedule):
     penalty = 0
 
     venue_time_slots = set() 
     team_time_slots = set()  
-    venue_usage = {venue["name"]: 0 for venue in venues} 
-    team_time = {team["name"]: [] for team in teams} 
-
+    venue_usage = {venue_id: 0 for venue_id in venue_ids}
+    team_time = {team_id: [] for team_id in team_ids}
+     
     for match in schedule:
-        team1 = match["team1"]
-        team2 = match["team2"]
-        day = match["day"]
-        timeslot = match["time"]
-        venue_name = match["venue"]
 
-        venue_avail = c.venue_availability(venue_name, day, timeslot, venue_time_slots)
-        team_overlap = c.no_team_overlap(team1, team2, day, timeslot, team_time_slots)
-        fair_rest = c.fair_rest_periods(team1, team2, team_time)
+        team1_id = match[0]
+        team2_id = match[1]
+        week = match[2]
+        day = match[3]
+        time = match[4]
+        venue_id = match[5]
+
+        venue_avail = c.venue_availability(venue_id, week, day, time, venue_time_slots)
+        team_overlap = c.no_team_overlap(team1_id, team2_id, week, day, time, team_time_slots)
+        fair_rest = c.fair_rest_periods(team1_id, team2_id, team_time)
 
         penalty += (venue_avail + team_overlap + fair_rest)
 
-        venue_time_slots.add((venue_name, day, timeslot))
-        team_time_slots.add((team1, day, timeslot))
-        team_time_slots.add((team2, day, timeslot))
+        venue_time_slots.add((venue_id, week, day, time))
+        team_time_slots.add((team1_id, week, day, time))
+        team_time_slots.add((team2_id, week, day, time))
         
-        venue_usage[venue_name] += 1
-        team_time[team1].append(match)
-        team_time[team2].append(match)
+        venue_usage[venue_id] += 1
+        team_time[team1_id].append((team1_id, team2_id, week, day, time))
+        team_time[team2_id].append((team1_id, team2_id, week, day, time))
+
 
     penalty += c.venue_usage_balance(list(venue_usage.values()))
     

@@ -1,27 +1,35 @@
 import pandas as pd
 from scheduler.fitness import fitness
+from scheduler.decode import decode_schedule
 
 def compare_random_vs_optimized(random_schedule,optimized_schedule):
     random_penalty = fitness(random_schedule)
     optimized_penalty = fitness(optimized_schedule)
 
-    random_schedule_data=[{
-        "Team 1": match['team1'],
-        "Team 2": match['team2'],
-        "Day": match['day'],
-        "Time": match['time'],
-        "Venue": match['venue']
+    decoded_random_schedule = decode_schedule(random_schedule)
+    decoded_optimized_schedule = decode_schedule(optimized_schedule)
 
-    }for match in random_schedule]
+    random_schedule_data=[{
+
+        "Team 1": match[0],
+        "Team 2": match[1],
+        "Week": match[2],
+        "Day": match[3],
+        "Time": match[4],
+        "Venue": match[5]
+
+    }for match in decoded_random_schedule]
 
     optimized_schedule_data=[{
-        "Team 1": match['team1'],
-        "Team 2": match['team2'],
-        "Day": match['day'],
-        "Time": match['time'],
-        "Venue": match['venue']
 
-    }for match in optimized_schedule]
+        "Team 1": match[0],
+        "Team 2": match[1],
+        "Week": match[2],
+        "Day": match[3],
+        "Time": match[4],
+        "Venue": match[5]
+
+    }for match in decoded_optimized_schedule]
 
     random_schedule_df = pd.DataFrame(random_schedule_data)
     optimized_schedule_df = pd.DataFrame(optimized_schedule_data)
